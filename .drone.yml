@@ -1,0 +1,26 @@
+---
+kind: pipeline
+type: docker
+name: publish
+
+steps:
+- name: lint
+  image: koalaman/shellcheck-alpine
+  commands:
+  - shellcheck *.sh
+
+- name: publish
+  image: plugins/docker
+  settings:
+    repo: pr0ger/drone-crane
+    username: pr0ger
+    password:
+      from_secret: docker_password
+  when:
+    event:
+      exclude:
+      - pull_request
+
+trigger:
+  branch:
+  - master
